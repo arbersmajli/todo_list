@@ -6,115 +6,83 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    final List<String> list = new ArrayList<>();
+    public List<String> list = new ArrayList<>();
 
+    private static final String TAG = "MainActivity";
+    DatabaseHelper databaseHelper;
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final ListView listView = findViewById(R.id.listView);
-        final TextAdapter adapter = new TextAdapter();
+        listView = findViewById(R.id.listView);
+        databaseHelper = new DatabaseHelper(this);
 
-        adapter.setData(list);
-        listView.setAdapter(adapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("Voulez-vous supprimer cette tâche ?")
-                        .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                list.remove(position);
-                                adapter.setData(list);
-                            }
-                        } )
-                        .setNegativeButton("Non", null)
-                        .create();
-                dialog.show();
-            }
-        });
+        populateListView();
 
         final Button newTaskButton = findViewById(R.id.newTaskButton);
 
         newTaskButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                final EditText taskInput = new EditText(MainActivity.this);
-                taskInput.setSingleLine();
-                AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("Ajouter une nouvelle tâche")
-                        .setMessage("Quelle est vôtre nouvelle tâche ?")
-                        .setView(taskInput)
-                        .setPositiveButton("Ajouter la tâche", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                list.add(taskInput.getText().toString());
-                                adapter.setData(list);
-                            }
-                        })
-                        .setNegativeButton("Annuler", null)
-                        .create();
-                dialog.show();
+                openEdit();
+
             }
         });
     }
 
-    class TextAdapter extends BaseAdapter{
+    private void populateListView(){
+        Log.d(TAG, "pupulateListView : Displaying data in the listView");
 
-        List<String> list = new ArrayList<>();
+        Cursor data = databaseHelper.getData();
 
-        void setData(List<String> mList){
-            list.clear();
-            list.addAll(mList);
-            notifyDataSetChanged();
+        ArrayList<String> listData = new ArrayList<>();
+        while(data.moveToNext()){
+            listData.add(data.getString(1));
         }
 
-        @Override
-        public int getCount(){
-            return list.size();
-        }
+        ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listData);
+        listView.setAdapter(adapter);
+    }
 
-        @Override
-        public Object getItem(int position){
-            return null;
-        }
+    private void toastMessage(String message){
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
 
-        @Override
-        public long getItemId(int position){
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent){
-            LayoutInflater inflater = (LayoutInflater) MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View rowView = inflater.inflate(R.layout.item , parent,false);
-            TextView textView = rowView.findViewById(R.id.task);
-            textView.setText(list.get(position));
-            return rowView;
-        }
-
-
-
+    public void openEdit(){
+        Intent intent = new Intent(this, Edit.class);
+        startActivity(intent);
     }
 
 }
