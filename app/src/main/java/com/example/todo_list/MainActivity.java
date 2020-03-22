@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,6 +35,24 @@ public class MainActivity extends AppCompatActivity {
 
         adapter.setData(list);
         listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("Voulez-vous supprimer cette tâche ?")
+                        .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                list.remove(position);
+                                adapter.setData(list);
+                            }
+                        } )
+                        .setNegativeButton("Non", null)
+                        .create();
+                dialog.show();
+            }
+        });
 
         final Button newTaskButton = findViewById(R.id.newTaskButton);
 
@@ -72,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getCount(){
-            return 0;
+            return list.size();
         }
 
         @Override
@@ -88,8 +107,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent){
             LayoutInflater inflater = (LayoutInflater) MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View rowView = inflater.inflate(R.layout.item, parent,false);
-            TextView textView = findViewById(R.id.task);
+            View rowView = inflater.inflate(R.layout.item , parent,false);
+            TextView textView = rowView.findViewById(R.id.task);
             textView.setText(list.get(position));
             return rowView;
         }
