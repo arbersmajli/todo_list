@@ -1,44 +1,26 @@
 package com.example.todo_list;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
-import android.content.DialogInterface;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    public List<String> list = new ArrayList<>();
-
     private static final String TAG = "MainActivity";
-    DatabaseHelper databaseHelper;
+    public static DatabaseHelper databaseHelper;
     private ListView listView;
 
     @Override
@@ -48,8 +30,6 @@ public class MainActivity extends AppCompatActivity {
 
         listView = findViewById(R.id.listView);
         databaseHelper = new DatabaseHelper(this);
-
-        populateListView();
 
         final Button newTaskButton = findViewById(R.id.newTaskButton);
 
@@ -62,18 +42,27 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onRestart(){
+        super.onRestart();
+        populateListView();
+    }
+
     private void populateListView(){
         Log.d(TAG, "pupulateListView : Displaying data in the listView");
 
-        Cursor data = databaseHelper.getData();
+        Cursor data = getData();
 
         ArrayList<String> listData = new ArrayList<>();
         while(data.moveToNext()){
             listData.add(data.getString(1));
         }
 
+        toastMessage("La taille : "+ listData.size());
+
         ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listData);
         listView.setAdapter(adapter);
+        data.close();
     }
 
     private void toastMessage(String message){
@@ -81,8 +70,37 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openEdit(){
-        Intent intent = new Intent(this, Edit.class);
+        Intent intent = new Intent(this, EditActivity.class);
         startActivity(intent);
+    }
+
+
+    public Cursor getData(){
+        SQLiteDatabase database = databaseHelper.getReadableDatabase();
+        String query = "SELECT * FROM " + DatabaseHelper.TABLE_NAME;
+
+        Cursor data = database.rawQuery(query, null);
+        //database.close();
+        return data;
+    }
+
+    public static boolean addTask(String item){
+        SQLiteDatabase database = databaseHelper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DatabaseHelper.COL_1, item);
+
+        long result = database.insert(DatabaseHelper.TABLE_NAME, null, contentValues);
+        // database.close();
+
+        Log.d(TAG, "addData : Adding " + item + " to "+ DatabaseHelper.TABLE_NAME);
+
+
+        if(result == 1){
+            return false;
+        }else{
+            return true;
+        }
+
     }
 
 }

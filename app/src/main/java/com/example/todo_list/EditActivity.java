@@ -8,11 +8,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class Edit extends AppCompatActivity {
+public class EditActivity extends AppCompatActivity {
 
     private static final String TAG = "Edit";
 
-    DatabaseHelper mDatabaseHelper;
+    //DatabaseHelper mDatabaseHelper;
     private Button buttonSubmit, buttonCancel;
     private EditText editTextTitle, editTextDate;
 
@@ -23,6 +23,8 @@ public class Edit extends AppCompatActivity {
         buttonSubmit = findViewById(R.id.buttonSubmit);
         editTextTitle = findViewById(R.id.editTextTitle);
 
+        //mDatabaseHelper = new DatabaseHelper(this);
+
         buttonSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -31,7 +33,7 @@ public class Edit extends AppCompatActivity {
                      //AddData("test");
                      AddData(newEntry);
                      editTextTitle.setText("");
-                     toastMessage("Sisi " + newEntry);
+                     finish();
                  }else{
                      toastMessage("T'as rien mis ");
                  }
@@ -41,11 +43,9 @@ public class Edit extends AppCompatActivity {
     }
 
     public void  AddData(String entry){
-        boolean insertData = mDatabaseHelper.addData(entry);
-
-
+        boolean insertData = MainActivity.addTask(entry);
         if(insertData){
-            toastMessage("Data succesfully inserted");
+            toastMessage("Data succesfully inserted : " + entry);
         }else{
             toastMessage("t'es nul à chier");
         }
