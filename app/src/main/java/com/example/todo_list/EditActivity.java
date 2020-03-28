@@ -11,27 +11,42 @@ import android.widget.Toast;
 public class EditActivity extends AppCompatActivity {
 
     private static final String TAG = "Edit";
-
-    //DatabaseHelper mDatabaseHelper;
-    private Button buttonSubmit, buttonCancel;
+    private Button buttonSubmit, buttonDelete;
     private EditText editTextTitle, editTextDate;
+    private String sessionTitle;
+    private Boolean sessionNewTask;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
         buttonSubmit = findViewById(R.id.buttonSubmit);
+        buttonDelete = findViewById(R.id.buttonDelete);
         editTextTitle = findViewById(R.id.editTextTitle);
 
-        //mDatabaseHelper = new DatabaseHelper(this);
+
+        sessionTitle = getIntent().getStringExtra(DatabaseHelper.COL_1);
+        sessionNewTask = getIntent().getBooleanExtra("sessionNewTask", false);
+
+        if(sessionNewTask){
+            editTextTitle.setText("");
+        }else {
+           editTextTitle.setText(sessionTitle);
+        }
 
         buttonSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                  String newEntry = editTextTitle.getText().toString();
                  if(editTextTitle.length() != 0){
-                     //AddData("test");
-                     AddData(newEntry);
+                     if(sessionNewTask){
+                         AddData(newEntry);
+                     }else{
+                         DeleteData(sessionTitle);
+                         AddData(newEntry);
+                     }
                      editTextTitle.setText("");
                      finish();
                  }else{
@@ -40,15 +55,24 @@ public class EditActivity extends AppCompatActivity {
             }
         });
 
+        buttonDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DeleteData(sessionTitle);
+                MainActivity.deleteListView();
+                toastMessage("fdp tu veux vrmnt supprimer " + sessionTitle);
+                finish();
+            }
+        });
+
+    }
+
+    public void DeleteData(String entry){
+        MainActivity.databaseHelper.deleteData(entry);
     }
 
     public void  AddData(String entry){
-        boolean insertData = MainActivity.addTask(entry);
-        if(insertData){
-            toastMessage("Data succesfully inserted : " + entry);
-        }else{
-            toastMessage("t'es nul à chier");
-        }
+        MainActivity.databaseHelper.addData(entry);
     }
 
     private void toastMessage(String message){

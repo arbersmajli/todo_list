@@ -34,7 +34,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
-/*
+
     public boolean addData(String item){
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -53,9 +53,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
     }
-*/
 
-/*
+    public boolean deleteData(String item){
+        SQLiteDatabase database = this.getWritableDatabase();
+
+        long result = database.delete(TABLE_NAME, COL_1 +  " = '" + item + "'", null);
+
+        if(result == 1){
+            return false;
+        }else{
+            return true;
+        }
+
+    }
+
     public Cursor getData(){
         SQLiteDatabase database = this.getReadableDatabase();
         String query = "SELECT * FROM " + TABLE_NAME;
@@ -63,7 +74,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //database.close();
         return data;
     }
-*/
+
 }
 
 

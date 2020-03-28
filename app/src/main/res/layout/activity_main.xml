@@ -8,6 +8,20 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="Nouvelle tâche"/>
+
+    <EditText
+        android:id="@+id/searchTask"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Recherchez une tâche" />
+
+    <Button
+        android:id="@+id/searchListView"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Rechercher"/>
     
     <ListView
         android:id="@+id/listView"
