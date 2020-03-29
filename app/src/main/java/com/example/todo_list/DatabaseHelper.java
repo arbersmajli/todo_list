@@ -67,9 +67,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public Cursor getData(){
+    public Cursor getData(String whereClause){
+        String where = "";
+        if(whereClause != null){
+            where = " WHERE " + COL_1 + " = '" + whereClause+"'";
+        } else if (whereClause == "") {
+            where = "";
+        }
         SQLiteDatabase database = this.getReadableDatabase();
-        String query = "SELECT * FROM " + TABLE_NAME;
+        String query = "SELECT * FROM " + TABLE_NAME + where;
         Cursor data = database.rawQuery(query, null);
         //database.close();
         return data;

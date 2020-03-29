@@ -7,11 +7,13 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -24,11 +26,11 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     public static DatabaseHelper databaseHelper;
     private static ListView listView; // affichage user
-    private Button searchListView;
     public static ArrayList<String> listDataContent = new ArrayList<>(); // liste qui est ensuite affiché au ListView
+    public EditText clauseTask;
+    public String clauseContent;
 
-
-    HashMap<String, String> listData = new HashMap<>();
+    static HashMap<String, String> listData = new HashMap<>();
 
 
      Boolean newTask = false;
@@ -40,17 +42,21 @@ public class MainActivity extends AppCompatActivity {
 
         listView = findViewById(R.id.listView);
         databaseHelper = new DatabaseHelper(this);
-        //populateListView();
+
         final Button newTaskButton = findViewById(R.id.newTaskButton);
+        final Button searchListView = findViewById(R.id.searchListView);
         final Intent intentEditActivity = new Intent(this, EditActivity.class);
 
         newTaskButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 newTask = true;
+                intentEditActivity.putExtra("sessionNewTask", newTask);
                 startActivity(intentEditActivity);
             }
         });
+
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -61,27 +67,41 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        clauseTask = findViewById(R.id.searchTask);
+        clauseTask.setInputType(InputType.TYPE_NULL);
+
+
+        searchListView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clauseContent = clauseTask.getText().toString();
+                if(!clauseContent.isEmpty() ||clauseContent == null){
+                    deleteListView();
+                    populateListView(clauseContent);
+                }
+            }
+        });
+
         intentEditActivity.putExtra("sessionNewTask", newTask);
-
-
-        populateListView();
-
+        populateListView(clauseContent);
     }
 
     @Override
     public void onRestart(){
         super.onRestart();
         listDataContent.clear();
-        populateListView();
+        populateListView(clauseContent);
     }
 
     public static void deleteListView(){
+            listData.clear();
+            listDataContent.clear();
             listView.setAdapter(null);
     }
 
-    public void populateListView(){
+    public void populateListView(String titleClause){
 
-        Cursor data = databaseHelper.getData();
+        Cursor data = databaseHelper.getData(titleClause);
 
         while(data.moveToNext()){
             listData.put(data.getString(0), data.getString(1));

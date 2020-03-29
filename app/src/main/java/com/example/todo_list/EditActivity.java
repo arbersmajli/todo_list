@@ -6,12 +6,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
+import android.widget.RelativeLayout.LayoutParams;
 
 public class EditActivity extends AppCompatActivity {
 
     private static final String TAG = "Edit";
-    private Button buttonSubmit, buttonDelete;
+    private Button buttonSubmit, buttonDelete, buttonCancel;
     private EditText editTextTitle, editTextDate;
     private String sessionTitle;
     private Boolean sessionNewTask;
@@ -24,22 +26,26 @@ public class EditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit);
         buttonSubmit = findViewById(R.id.buttonSubmit);
         buttonDelete = findViewById(R.id.buttonDelete);
+        buttonCancel = findViewById(R.id.buttonCancel);
         editTextTitle = findViewById(R.id.editTextTitle);
-
-
+        buttonCancel.setVisibility(View.GONE);
         sessionTitle = getIntent().getStringExtra(DatabaseHelper.COL_1);
         sessionNewTask = getIntent().getBooleanExtra("sessionNewTask", false);
+        final String newEntry = editTextTitle.getText().toString();
+
 
         if(sessionNewTask){
             editTextTitle.setText("");
+            buttonDelete.setVisibility(View.GONE);
+            buttonCancel.setVisibility(View.VISIBLE);
         }else {
            editTextTitle.setText(sessionTitle);
         }
+        
 
         buttonSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                 String newEntry = editTextTitle.getText().toString();
                  if(editTextTitle.length() != 0){
                      if(sessionNewTask){
                          AddData(newEntry);
@@ -58,9 +64,21 @@ public class EditActivity extends AppCompatActivity {
         buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DeleteData(sessionTitle);
-                MainActivity.deleteListView();
-                toastMessage("fdp tu veux vrmnt supprimer " + sessionTitle);
+
+
+                if(editTextTitle.length() != 0){
+                    DeleteData(sessionTitle);
+                    MainActivity.deleteListView();
+                    finish();
+                }else{
+                    toastMessage("Tu veux supprimer quoi boloss ?");
+                }
+            }
+        });
+
+        buttonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 finish();
             }
         });
