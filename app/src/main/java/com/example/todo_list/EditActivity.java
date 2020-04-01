@@ -2,22 +2,29 @@ package com.example.todo_list;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.text.InputType;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 public class EditActivity extends AppCompatActivity {
 
     private static final String TAG = "Edit";
-    private Button buttonSubmit, buttonDelete, buttonCancel;
+    private Button buttonSubmit, buttonDelete, buttonCancel, buttonNewSubTask;
     private EditText editTextTitle, editTextDate;
     private String sessionTitle;
     private Boolean sessionNewTask;
-
-    // étape du projet : plutot pas mal
+    private static ListView listViewSubTask;
+    public static DatabaseHelper databaseHelper;
+    public static ArrayList<String> listDataContent = new ArrayList<>(); // liste qui est ensuite affiché au ListView
 
 
     @Override
@@ -28,10 +35,11 @@ public class EditActivity extends AppCompatActivity {
         buttonDelete = findViewById(R.id.buttonDelete);
         buttonCancel = findViewById(R.id.buttonCancel);
         editTextTitle = findViewById(R.id.editTextTitle);
-
-
-        sessionTitle = getIntent().getStringExtra(DatabaseHelper.COL_1);
+        buttonNewSubTask = findViewById(R.id.buttonNewSubTask);
+        databaseHelper = new DatabaseHelper(this);
+        sessionTitle = getIntent().getStringExtra(DatabaseHelper.COL_1_MA);
         sessionNewTask = getIntent().getBooleanExtra("sessionNewTask", false);
+        listViewSubTask = findViewById(R.id.listViewSubTask);
 
 
         if(sessionNewTask){
@@ -44,8 +52,8 @@ public class EditActivity extends AppCompatActivity {
         buttonSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                 String newEntry = editTextTitle.getText().toString();
                  if(editTextTitle.length() != 0){
+                     String newEntry = editTextTitle.getText().toString();
                      if(sessionNewTask){
                          AddData(newEntry);
                      }else{
@@ -65,7 +73,7 @@ public class EditActivity extends AppCompatActivity {
             public void onClick(View v) {
                 DeleteData(sessionTitle);
                 MainActivity.deleteListView();
-                toastMessage("fdp tu veux vrmnt supprimer " + sessionTitle);
+                //deleteListView();
                 finish();
             }
         });
@@ -77,14 +85,42 @@ public class EditActivity extends AppCompatActivity {
             }
         });
 
+        buttonNewSubTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(EditActivity.this, SubActivity.class));
+            }
+        });
+
     }
 
     public void DeleteData(String entry){
-        MainActivity.databaseHelper.deleteData(entry);
+        MainActivity.databaseHelper.deleteDataMainActivity(entry);
     }
 
+    @Override
+    public void onRestart(){
+        super.onRestart();
+        listDataContent.clear();
+        //populateListView(DatabaseHelper.TABLE_NAME_MAIN_ACTIVITY,newEntry);
+    }
+
+
     public void  AddData(String entry){
-        MainActivity.databaseHelper.addData(entry);
+        MainActivity.databaseHelper.addDataMainActivity(entry);
+    }
+
+    public void populateListView(String table, String clause){
+        Cursor data = databaseHelper.getData(table, clause);
+
+        while(data.moveToNext()){
+            listDataContent.add(data.getString(1));
+        }
+
+        ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listDataContent);
+        listViewSubTask.setAdapter(adapter);
+        data.close();
+
     }
 
     private void toastMessage(String message){

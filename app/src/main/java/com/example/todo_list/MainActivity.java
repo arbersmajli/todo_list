@@ -2,13 +2,10 @@ package com.example.todo_list;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -68,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                 intentEditActivity.putExtra("sessionNewTask", false);
                 // intentEditActivity.putExtra("sessionNewTask", newTask);
                 Object listItem = listView.getItemAtPosition(position);
-                intentEditActivity.putExtra(databaseHelper.COL_1, listItem.toString());
+                intentEditActivity.putExtra(databaseHelper.COL_1_MA, listItem.toString());
                 startActivity(intentEditActivity);
             }
         });
@@ -79,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
                 deleteListView();
                 //toastMessage(editText.getText().toString());
-                populateListView(editText.getText().toString());
+                populateListView(DatabaseHelper.TABLE_NAME_MAIN_ACTIVITY, editText.getText().toString());
                 if(listDataContent.isEmpty()){
                     toastMessage("Aucune correspondance");
                 }
@@ -88,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        populateListView("");
+        populateListView(DatabaseHelper.TABLE_NAME_MAIN_ACTIVITY,"");
 
     }
 
@@ -96,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
     public void onRestart(){
         super.onRestart();
         listDataContent.clear();
-        populateListView("");
+        populateListView(DatabaseHelper.TABLE_NAME_MAIN_ACTIVITY,"");
     }
 
     public static void deleteListView(){
@@ -104,12 +101,12 @@ public class MainActivity extends AppCompatActivity {
         listView.setAdapter(null);
     }
 
-    public void populateListView(String clause){
+    public void populateListView(String table, String clause){
 
-        Cursor data = databaseHelper.getData(clause);
+        Cursor data = databaseHelper.getData(table, clause);
 
         while(data.moveToNext()){
-            listData.put(data.getString(0), data.getString(1));
+            //listData.put(data.getString(0), data.getString(1));
             listDataContent.add(data.getString(1));
         }
 
