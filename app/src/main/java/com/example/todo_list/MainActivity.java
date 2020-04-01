@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     public static ArrayList<String> listDataContent = new ArrayList<>(); // liste qui est ensuite affiché au ListView
 
     HashMap<String, String> listData = new HashMap<>();
-
+    private static Button buttonSearch;
 
      Boolean newTask = false;
 
@@ -40,9 +40,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         listView = findViewById(R.id.listView);
         editText = findViewById(R.id.searchTask);
         databaseHelper = new DatabaseHelper(this);
+        buttonSearch = findViewById(R.id.searchTaskButton);
+        final String contentEditText = editText.getText().toString();
         //populateListView();
         final Button newTaskButton = findViewById(R.id.newTaskButton);
         final Intent intentEditActivity = new Intent(this, EditActivity.class);
@@ -70,8 +73,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        buttonSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-        populateListView();
+                deleteListView();
+                //toastMessage(editText.getText().toString());
+                populateListView(editText.getText().toString());
+                if(listDataContent.isEmpty()){
+                    toastMessage("Aucune correspondance");
+                }
+
+            }
+        });
+
+
+        populateListView("");
 
     }
 
@@ -79,16 +96,17 @@ public class MainActivity extends AppCompatActivity {
     public void onRestart(){
         super.onRestart();
         listDataContent.clear();
-        populateListView();
+        populateListView("");
     }
 
     public static void deleteListView(){
-            listView.setAdapter(null);
+        listDataContent.clear();
+        listView.setAdapter(null);
     }
 
-    public void populateListView(){
+    public void populateListView(String clause){
 
-        Cursor data = databaseHelper.getData();
+        Cursor data = databaseHelper.getData(clause);
 
         while(data.moveToNext()){
             listData.put(data.getString(0), data.getString(1));

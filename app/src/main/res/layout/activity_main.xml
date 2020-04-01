@@ -18,7 +18,7 @@
         android:hint="Recherchez une tâche" />
 
     <Button
-        android:id="@+id/searchListView"
+        android:id="@+id/searchTaskButton"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="Rechercher"/>
