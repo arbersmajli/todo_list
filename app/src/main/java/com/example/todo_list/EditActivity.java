@@ -11,7 +11,7 @@ import android.widget.Toast;
 public class EditActivity extends AppCompatActivity {
 
     private static final String TAG = "Edit";
-    private Button buttonSubmit, buttonDelete;
+    private Button buttonSubmit, buttonDelete, buttonCancel;
     private EditText editTextTitle, editTextDate;
     private String sessionTitle;
     private Boolean sessionNewTask;
@@ -24,11 +24,14 @@ public class EditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit);
         buttonSubmit = findViewById(R.id.buttonSubmit);
         buttonDelete = findViewById(R.id.buttonDelete);
+        buttonCancel = findViewById(R.id.buttonCancel);
         editTextTitle = findViewById(R.id.editTextTitle);
 
 
         sessionTitle = getIntent().getStringExtra(DatabaseHelper.COL_1);
         sessionNewTask = getIntent().getBooleanExtra("sessionNewTask", false);
+
+        toastMessage("pouloulou:"+ sessionNewTask);
 
         if(sessionNewTask){
             editTextTitle.setText("");
@@ -61,6 +64,13 @@ public class EditActivity extends AppCompatActivity {
                 DeleteData(sessionTitle);
                 MainActivity.deleteListView();
                 toastMessage("fdp tu veux vrmnt supprimer " + sessionTitle);
+                finish();
+            }
+        });
+
+        buttonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 finish();
             }
         });

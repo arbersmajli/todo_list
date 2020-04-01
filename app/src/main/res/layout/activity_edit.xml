@@ -38,6 +38,15 @@
                 android:layout_toRightOf="@+id/editTextTitle"
                 android:text="Supprimer" />
 
+            <Button
+                android:id="@+id/buttonCancel"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="100dp"
+                android:layout_marginTop="100dp"
+                android:layout_toRightOf="@+id/editTextTitle"
+                android:text="Annuler" />
+
         </RelativeLayout>
 
     </RelativeLayout>

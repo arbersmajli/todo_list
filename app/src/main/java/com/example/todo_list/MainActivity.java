@@ -7,11 +7,13 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -25,8 +27,8 @@ public class MainActivity extends AppCompatActivity {
     public static DatabaseHelper databaseHelper;
     private static ListView listView; // affichage user
     private Button searchListView;
+    private static EditText editText;
     public static ArrayList<String> listDataContent = new ArrayList<>(); // liste qui est ensuite affiché au ListView
-
 
     HashMap<String, String> listData = new HashMap<>();
 
@@ -39,15 +41,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         listView = findViewById(R.id.listView);
+        editText = findViewById(R.id.searchTask);
         databaseHelper = new DatabaseHelper(this);
         //populateListView();
         final Button newTaskButton = findViewById(R.id.newTaskButton);
         final Intent intentEditActivity = new Intent(this, EditActivity.class);
 
+        editText.setInputType(InputType.TYPE_NULL);
+
         newTaskButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 newTask = true;
+                intentEditActivity.putExtra("sessionNewTask", true);
                 startActivity(intentEditActivity);
             }
         });
@@ -55,13 +61,14 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                newTask = false;
+                intentEditActivity.putExtra("sessionNewTask", false);
+                // intentEditActivity.putExtra("sessionNewTask", newTask);
                 Object listItem = listView.getItemAtPosition(position);
                 intentEditActivity.putExtra(databaseHelper.COL_1, listItem.toString());
                 startActivity(intentEditActivity);
             }
         });
-
-        intentEditActivity.putExtra("sessionNewTask", newTask);
 
 
         populateListView();
