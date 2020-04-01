@@ -17,6 +17,7 @@ public class EditActivity extends AppCompatActivity {
     private String sessionTitle;
     private Boolean sessionNewTask;
 
+    // étape du projet : plutot pas mal
 
 
     @Override
