@@ -3,6 +3,7 @@ package com.example.todo_list;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,10 +32,10 @@ public class EditActivity extends AppCompatActivity {
         sessionTitle = getIntent().getStringExtra(DatabaseHelper.COL_1);
         sessionNewTask = getIntent().getBooleanExtra("sessionNewTask", false);
 
-        toastMessage("pouloulou:"+ sessionNewTask);
 
         if(sessionNewTask){
             editTextTitle.setText("");
+            buttonDelete.setVisibility(View.GONE);
         }else {
            editTextTitle.setText(sessionTitle);
         }
