@@ -21,6 +21,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_1_EA = COL_1_MA;
     public static final String COL_2_EA = "description";
     public static final String COL_3_EA = "date_fin";
+    public static final String COL_4_EA = "termine";
+
 
 
     public DatabaseHelper(Context context){
@@ -31,7 +33,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String createTableMainActivity = "CREATE TABLE " + TABLE_NAME_MAIN_ACTIVITY + " ("+ COL_0_MA +" INTEGER PRIMARY KEY, " + COL_1_MA + " TEXT )";
-        String createTableEditActivity = "CREATE TABLE " + TABLE_TASK_EDIT_ACTIVITY + " ("+ COL_0_EA +" INTEGER PRIMARY KEY, " + COL_1_EA + " TEXT, " + COL_2_EA + " TEXT, " + COL_3_EA + " TEXT )";
+        String createTableEditActivity = "CREATE TABLE " + TABLE_TASK_EDIT_ACTIVITY + " ("+ COL_0_EA +" INTEGER PRIMARY KEY, " + COL_1_EA + " TEXT, " + COL_2_EA + " TEXT, " + COL_3_EA + " TEXT, " + COL_4_EA + " BOOLEAN )";
 
 
         db.execSQL(createTableMainActivity);
@@ -49,15 +51,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_1_MA, item);
 
-
-        database.insert(TABLE_NAME_MAIN_ACTIVITY, null, contentValues);
-        long result = database.insert(TABLE_TASK_EDIT_ACTIVITY, null, contentValues);
+        long result = database.insert(TABLE_NAME_MAIN_ACTIVITY, null, contentValues);
+        //database.insert(TABLE_TASK_EDIT_ACTIVITY, null, contentValues);
 
         database.close();
 
         Log.d(TAG, "addData : Adding " + item + " to "+ TABLE_NAME_MAIN_ACTIVITY);
 
+        if(result == 1){
+            return false;
+        }else{
+            return true;
+        }
+    }
 
+    public boolean addDataEditActivity(String title, String description, String dateFin, boolean finished){
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_1_EA, title);
+        contentValues.put(COL_2_EA, description);
+        contentValues.put(COL_3_EA, dateFin);
+        contentValues.put(COL_4_EA, finished);
+
+        long result = database.insert(TABLE_TASK_EDIT_ACTIVITY, null, contentValues);
+
+        database.close();
         if(result == 1){
             return false;
         }else{
@@ -65,12 +83,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
     }
+
+
 
     public boolean deleteDataMainActivity(String item){
         SQLiteDatabase database = this.getWritableDatabase();
 
-        database.delete(TABLE_NAME_MAIN_ACTIVITY, COL_1_MA +  " = '" + item + "'", null);
-        long result = database.delete(TABLE_TASK_EDIT_ACTIVITY, COL_1_EA + " = '"+ item + "'", null);
+        long result = database.delete(TABLE_NAME_MAIN_ACTIVITY, COL_1_MA +  " = '" + item + "'", null);
+        // database.delete(TABLE_TASK_EDIT_ACTIVITY, COL_1_EA + " = '"+ item + "'", null);
+
+        if(result == 1){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    public boolean deleteDataEditActivity(String title, String description){
+        SQLiteDatabase database = this.getWritableDatabase();
+
+        long result = database.delete(TABLE_TASK_EDIT_ACTIVITY, COL_1_EA + " = '" + title + "' AND " + COL_2_EA + " = '" + description + "'", null);
+
 
         if(result == 1){
             return false;
@@ -79,6 +112,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
     }
+
 
     public Cursor getData(String table, String clause){
         String clauseWhere = "";

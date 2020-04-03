@@ -59,6 +59,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         tools:ignore="MissingConstraints"
+        android:id="@+id/dateLayout"
         app:layout_constraintTop_toBottomOf="@+id/descriptionLayout"
         android:orientation="horizontal"
         android:weightSum="3">
@@ -76,6 +77,29 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:inputType="textPersonName" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints"
+        app:layout_constraintTop_toBottomOf="@+id/dateLayout"
+        android:orientation="horizontal"
+        android:weightSum="3">
+        <TextView
+            android:id="@+id/textViewSubFinshed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Terminé ?"
+            android:layout_weight="1"
+            />
+
+        <Switch
+            android:id="@+id/switchFinished"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2" />
     </LinearLayout>
 
     <LinearLayout

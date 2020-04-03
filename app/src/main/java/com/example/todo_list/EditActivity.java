@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,7 +23,7 @@ public class EditActivity extends AppCompatActivity {
     private EditText editTextTitle, editTextDate;
     private String sessionTitle;
     private Boolean sessionNewTask;
-    private static ListView listViewSubTask;
+    public static ListView listViewSubTask;
     public static DatabaseHelper databaseHelper;
     public static ArrayList<String> listDataContent = new ArrayList<>(); // liste qui est ensuite affiché au ListView
 
@@ -40,6 +41,7 @@ public class EditActivity extends AppCompatActivity {
         sessionTitle = getIntent().getStringExtra(DatabaseHelper.COL_1_MA);
         sessionNewTask = getIntent().getBooleanExtra("sessionNewTask", false);
         listViewSubTask = findViewById(R.id.listViewSubTask);
+        final Intent intentEditSubActivity = new Intent(this, SubActivity.class);
 
 
         if(sessionNewTask){
@@ -48,6 +50,9 @@ public class EditActivity extends AppCompatActivity {
         }else {
            editTextTitle.setText(sessionTitle);
         }
+
+
+
 
         buttonSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,6 +83,18 @@ public class EditActivity extends AppCompatActivity {
             }
         });
 
+
+        listViewSubTask.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Object listItem = listViewSubTask.getItemAtPosition(position);
+                intentEditSubActivity.putExtra(databaseHelper.COL_2_EA, listItem.toString());
+                intentEditSubActivity.putExtra(databaseHelper.COL_1_MA,sessionTitle);
+                startActivity(intentEditSubActivity);
+            }
+        });
+
+
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,9 +105,15 @@ public class EditActivity extends AppCompatActivity {
         buttonNewSubTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(EditActivity.this, SubActivity.class));
+                intentEditSubActivity.putExtra(databaseHelper.COL_1_EA, editTextTitle.getText().toString());
+                startActivity(intentEditSubActivity);
             }
         });
+
+
+        listDataContent.clear();
+        listViewSubTask.setAdapter(null);
+        populateListView(DatabaseHelper.TABLE_TASK_EDIT_ACTIVITY, editTextTitle.getText().toString());
 
     }
 
@@ -98,11 +121,15 @@ public class EditActivity extends AppCompatActivity {
         MainActivity.databaseHelper.deleteDataMainActivity(entry);
     }
 
+
+
+
     @Override
     public void onRestart(){
         super.onRestart();
         listDataContent.clear();
-        //populateListView(DatabaseHelper.TABLE_NAME_MAIN_ACTIVITY,newEntry);
+        listViewSubTask.setAdapter(null);
+        populateListView(DatabaseHelper.TABLE_TASK_EDIT_ACTIVITY, editTextTitle.getText().toString());
     }
 
 
@@ -114,7 +141,7 @@ public class EditActivity extends AppCompatActivity {
         Cursor data = databaseHelper.getData(table, clause);
 
         while(data.moveToNext()){
-            listDataContent.add(data.getString(1));
+            listDataContent.add(data.getString(2));
         }
 
         ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listDataContent);

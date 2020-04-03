@@ -73,14 +73,11 @@ public class MainActivity extends AppCompatActivity {
         buttonSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 deleteListView();
-                //toastMessage(editText.getText().toString());
                 populateListView(DatabaseHelper.TABLE_NAME_MAIN_ACTIVITY, editText.getText().toString());
                 if(listDataContent.isEmpty()){
                     toastMessage("Aucune correspondance");
                 }
-
             }
         });
 
