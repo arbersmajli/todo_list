@@ -26,6 +26,9 @@ public class EditActivity extends AppCompatActivity {
     public static ListView listViewSubTask;
     public static DatabaseHelper databaseHelper;
     public static ArrayList<String> listDataContent = new ArrayList<>(); // liste qui est ensuite affiché au ListView
+    public static ArrayList<Integer> listIdDataContent = new ArrayList<>();
+    int sessionId, newIdCreated;
+
 
 
     @Override
@@ -40,16 +43,31 @@ public class EditActivity extends AppCompatActivity {
         databaseHelper = new DatabaseHelper(this);
         sessionTitle = getIntent().getStringExtra(DatabaseHelper.COL_1_MA);
         sessionNewTask = getIntent().getBooleanExtra("sessionNewTask", false);
+        sessionId = getIntent().getIntExtra("sessionId", -1);
         listViewSubTask = findViewById(R.id.listViewSubTask);
         final Intent intentEditSubActivity = new Intent(this, SubActivity.class);
 
 
+        buttonNewSubTask.setVisibility(View.GONE);
+        listViewSubTask.setVisibility(View.GONE);
+
         if(sessionNewTask){
             editTextTitle.setText("");
+            //toastMessage("fumier"+ sessionId);
             buttonDelete.setVisibility(View.GONE);
+
         }else {
-           editTextTitle.setText(sessionTitle);
+            //populateDataEditActivity(sessionId);
+            //populateDataEditActivity(sessionId);
+            buttonNewSubTask.setVisibility(View.VISIBLE);
+            listViewSubTask.setVisibility(View.VISIBLE);
+            populateTitleById(sessionId);
+            buttonSubmit.setText("Update");
+
+
+            //editTextTitle.setText("_____"+sessionId);
         }
+
 
 
 
@@ -62,8 +80,9 @@ public class EditActivity extends AppCompatActivity {
                      if(sessionNewTask){
                          AddData(newEntry);
                      }else{
-                         DeleteData(sessionTitle);
-                         AddData(newEntry);
+                         Update(sessionId, editTextTitle.getText().toString());
+                         //DeleteData(sessionId);
+                         //AddData(newEntry);
                      }
                      editTextTitle.setText("");
                      finish();
@@ -76,7 +95,7 @@ public class EditActivity extends AppCompatActivity {
         buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DeleteData(sessionTitle);
+                DeleteData(sessionId);
                 MainActivity.deleteListView();
                 //deleteListView();
                 finish();
@@ -88,8 +107,12 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Object listItem = listViewSubTask.getItemAtPosition(position);
-                intentEditSubActivity.putExtra(databaseHelper.COL_2_EA, listItem.toString());
-                intentEditSubActivity.putExtra(databaseHelper.COL_1_MA,sessionTitle);
+                int idPosition = Integer.parseInt(listItem.toString().substring(0, listItem.toString().indexOf(")")));
+
+
+                intentEditSubActivity.putExtra(databaseHelper.COL_0_EA, sessionId); // id de la tache
+                intentEditSubActivity.putExtra(databaseHelper.COL_1_EA, listItem.toString().substring(0, listItem.toString().indexOf(")"))); // id de la sous-tâche
+
                 startActivity(intentEditSubActivity);
             }
         });
@@ -105,31 +128,51 @@ public class EditActivity extends AppCompatActivity {
         buttonNewSubTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intentEditSubActivity.putExtra(databaseHelper.COL_1_EA, editTextTitle.getText().toString());
+                //intentEditSubActivity.putExtra(databaseHelper.COL_1_EA, editTextTitle.getText().toString());
+                intentEditSubActivity.putExtra("newSubTask", true);
+                intentEditSubActivity.putExtra(databaseHelper.COL_0_EA, sessionId);
+                //intentEditSubActivity.putExtra(databaseHelper.COL_0_EA, sessionId);
+
+                //toastMessage(""+sessionId);
                 startActivity(intentEditSubActivity);
             }
         });
-
-
         listDataContent.clear();
         listViewSubTask.setAdapter(null);
-        populateListView(DatabaseHelper.TABLE_TASK_EDIT_ACTIVITY, editTextTitle.getText().toString());
+
+
+        populateListView(DatabaseHelper.TABLE_TASK_EDIT_ACTIVITY, sessionId);
 
     }
 
-    public void DeleteData(String entry){
-        MainActivity.databaseHelper.deleteDataMainActivity(entry);
+    public void populateTitleById(int id){
+        Cursor data = databaseHelper.getData(DatabaseHelper.TABLE_NAME_MAIN_ACTIVITY, DatabaseHelper.COL_0_MA, id);
+        while(data.moveToNext()){
+            editTextTitle.setText(data.getString(1));
+        }
+
+        data.close();
     }
 
 
+    public void DeleteData(int id){
+        MainActivity.databaseHelper.deleteDataMainActivity(id);
 
+    //    MainActivity.databaseHelper.deleteDataMainActivity(entry);
+    }
 
     @Override
     public void onRestart(){
         super.onRestart();
+
         listDataContent.clear();
         listViewSubTask.setAdapter(null);
-        populateListView(DatabaseHelper.TABLE_TASK_EDIT_ACTIVITY, editTextTitle.getText().toString());
+        populateListView(DatabaseHelper.TABLE_TASK_EDIT_ACTIVITY, sessionId);
+        //populateListView(DatabaseHelper.TABLE_TASK_EDIT_ACTIVITY, editTextTitle.getText().toString());
+    }
+
+    public void Update(int id, String newTitle){
+        MainActivity.databaseHelper.updateData(id, newTitle);
     }
 
 
@@ -137,11 +180,25 @@ public class EditActivity extends AppCompatActivity {
         MainActivity.databaseHelper.addDataMainActivity(entry);
     }
 
+    public void populateListView(String table, int idActivity){
+        Cursor data = databaseHelper.getData(table, databaseHelper.COL_1_EA, idActivity);
+
+        while(data.moveToNext()){
+            listDataContent.add(data.getInt(0)+ ") " +data.getString(2));
+        }
+
+        ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listDataContent);
+        listViewSubTask.setAdapter(adapter);
+        data.close();
+
+
+    }
+
     public void populateListView(String table, String clause){
         Cursor data = databaseHelper.getData(table, clause);
 
         while(data.moveToNext()){
-            listDataContent.add(data.getString(2));
+            listDataContent.add(data.getInt(0)+ ") " +data.getString(2));
         }
 
         ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listDataContent);

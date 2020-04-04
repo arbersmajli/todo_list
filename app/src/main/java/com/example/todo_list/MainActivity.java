@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     public static DatabaseHelper databaseHelper;
     private static ListView listView; // affichage user
     private Button searchListView;
-    private static EditText editText;
+    private static EditText searchEditText;
     public static ArrayList<String> listDataContent = new ArrayList<>(); // liste qui est ensuite affiché au ListView
 
     HashMap<String, String> listData = new HashMap<>();
@@ -39,21 +39,22 @@ public class MainActivity extends AppCompatActivity {
 
 
         listView = findViewById(R.id.listView);
-        editText = findViewById(R.id.searchTask);
+        searchEditText = findViewById(R.id.searchTask);
         databaseHelper = new DatabaseHelper(this);
         buttonSearch = findViewById(R.id.searchTaskButton);
-        final String contentEditText = editText.getText().toString();
+        final String contentEditText = searchEditText.getText().toString();
         //populateListView();
         final Button newTaskButton = findViewById(R.id.newTaskButton);
         final Intent intentEditActivity = new Intent(this, EditActivity.class);
 
-        editText.setInputType(InputType.TYPE_NULL);
+        searchEditText.setInputType(InputType.TYPE_NULL);
 
         newTaskButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 newTask = true;
                 intentEditActivity.putExtra("sessionNewTask", true);
+                intentEditActivity.putExtra("sessionId", -1);
                 startActivity(intentEditActivity);
             }
         });
@@ -61,11 +62,13 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                newTask = false;
-                intentEditActivity.putExtra("sessionNewTask", false);
-                // intentEditActivity.putExtra("sessionNewTask", newTask);
                 Object listItem = listView.getItemAtPosition(position);
-                intentEditActivity.putExtra(databaseHelper.COL_1_MA, listItem.toString());
+                newTask = false;
+                int idPosition = Integer.parseInt(listItem.toString().substring(0, listItem.toString().indexOf(")")));
+                //intentEditActivity.putExtra("sessionNewTask", false);
+                intentEditActivity.putExtra("sessionNewTask", newTask);
+                intentEditActivity.putExtra("sessionId", idPosition);
+                //intentEditActivity.putExtra(databaseHelper.COL_1_MA, listItem.toString());
                 startActivity(intentEditActivity);
             }
         });
@@ -74,9 +77,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 deleteListView();
-                populateListView(DatabaseHelper.TABLE_NAME_MAIN_ACTIVITY, editText.getText().toString());
+                populateListView(DatabaseHelper.TABLE_NAME_MAIN_ACTIVITY, searchEditText.getText().toString());
                 if(listDataContent.isEmpty()){
                     toastMessage("Aucune correspondance");
+                }else if(searchEditText.length() <= 0){
+                    toastMessage("Rien recherché");
                 }
             }
         });
@@ -104,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
         while(data.moveToNext()){
             //listData.put(data.getString(0), data.getString(1));
-            listDataContent.add(data.getString(1));
+            listDataContent.add(data.getString(0) + ") " + data.getString(1));
         }
 
         ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listDataContent);
