@@ -22,12 +22,13 @@ public class EditActivity extends AppCompatActivity {
     private Button buttonSubmit, buttonDelete, buttonCancel, buttonNewSubTask;
     private EditText editTextTitle, editTextDate;
     private String sessionTitle;
-    private Boolean sessionNewTask;
+    private Boolean sessionNewTask,newSubTask;
     public static ListView listViewSubTask;
     public static DatabaseHelper databaseHelper;
     public static ArrayList<String> listDataContent = new ArrayList<>(); // liste qui est ensuite affiché au ListView
     public static ArrayList<Integer> listIdDataContent = new ArrayList<>();
     int sessionId, newIdCreated;
+
 
 
 
@@ -107,11 +108,12 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Object listItem = listViewSubTask.getItemAtPosition(position);
-                int idPosition = Integer.parseInt(listItem.toString().substring(0, listItem.toString().indexOf(")")));
+                int idSubTask = Integer.parseInt(listItem.toString().substring(0, listItem.toString().indexOf(")")));  // fais un substr pour recupérer le chiffre
 
-
+                intentEditSubActivity.putExtra("newSubTask", false);
                 intentEditSubActivity.putExtra(databaseHelper.COL_0_EA, sessionId); // id de la tache
-                intentEditSubActivity.putExtra(databaseHelper.COL_1_EA, listItem.toString().substring(0, listItem.toString().indexOf(")"))); // id de la sous-tâche
+                intentEditSubActivity.putExtra(databaseHelper.COL_1_EA, idSubTask); // id de la sous-tâche
+
 
                 startActivity(intentEditSubActivity);
             }
@@ -133,7 +135,6 @@ public class EditActivity extends AppCompatActivity {
                 intentEditSubActivity.putExtra(databaseHelper.COL_0_EA, sessionId);
                 //intentEditSubActivity.putExtra(databaseHelper.COL_0_EA, sessionId);
 
-                //toastMessage(""+sessionId);
                 startActivity(intentEditSubActivity);
             }
         });

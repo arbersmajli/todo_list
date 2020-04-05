@@ -156,7 +156,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }else{
             return true;
         }
+    }
 
+    public boolean updateData(int idTask, int idSubTask, String description, String date, Boolean finished){
+        SQLiteDatabase database = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_2_EA, description);
+        contentValues.put(COL_3_EA, date);
+        contentValues.put(COL_4_EA, finished);
+
+        long result = database.update(TABLE_TASK_EDIT_ACTIVITY, contentValues, COL_0_EA + " = " + idSubTask + " AND " + COL_1_EA + " = " + idTask, null);
+
+        if(result == 1){
+            return false;
+        }else{
+            return true;
+        }
     }
 
 
@@ -169,6 +185,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase database = this.getWritableDatabase();
 
         long result = database.delete(TABLE_TASK_EDIT_ACTIVITY, COL_0_EA + " = '" + id + "'", null);
+
+        if(result == 1){
+            return false;
+        }else{
+            return true;
+        }
+
+    }
+
+    public boolean deleteDataEditActivity(int idTask, int idSubTask){
+        SQLiteDatabase database = this.getWritableDatabase();
+
+        long result = database.delete(TABLE_TASK_EDIT_ACTIVITY, COL_0_EA + " = " + idSubTask + " AND " + COL_1_EA + " = " + idTask, null);
 
         if(result == 1){
             return false;
@@ -203,6 +232,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             clauseWhere = " WHERE " + columnToPoint +" = " + id + " ";
         }
 
+        SQLiteDatabase database = this.getReadableDatabase();
+        String query = "SELECT * FROM " + table + clauseWhere;
+        Cursor data = database.rawQuery(query, null);
+        //database.close();
+        return data;
+    }
+
+    public Cursor getData(String table, String columnToPoint, String columnToJoin, int idTask, int idSubTask){
+        String clauseWhere = "";
+
+        if(idTask > -1){
+            clauseWhere = " WHERE " + columnToPoint +" = " + idSubTask + " AND " + columnToJoin + " = " + idTask;
+        }
 
         SQLiteDatabase database = this.getReadableDatabase();
         String query = "SELECT * FROM " + table + clauseWhere;
@@ -210,6 +252,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //database.close();
         return data;
     }
+
 
 
 

@@ -50,6 +50,13 @@ public class SubActivity extends AppCompatActivity {
 
 
 
+        if(!sessionNewSubTask) {
+            //toastMessage("task : " + sessionIdTask + ", subTask : " + sessionIdSubTask);
+            populateDataSubActivity(sessionIdTask, sessionIdSubTask);
+            add.setText("Update");
+        }else{
+            getTitleById(sessionIdTask);
+        }
 
         //toastMessage(databaseHelper.COL_0_EA +" : " +sessionIdTask + ", " + databaseHelper.COL_1_EA + " : " + sessionIdSubTask);
         //title.setText(sessionTitle);
@@ -60,7 +67,11 @@ public class SubActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finished = switchFinished.isChecked();
-                AddData(sessionIdTask, description.getText().toString(), date.getText().toString(), finished);
+                if (sessionNewSubTask) {
+                    AddData(sessionIdTask, description.getText().toString(), date.getText().toString(), finished);
+                } else {
+                    UpdateData(sessionIdTask, sessionIdSubTask, description.getText().toString(), date.getText().toString(), finished);
+                }
                 finish();
             }
         });
@@ -77,16 +88,16 @@ public class SubActivity extends AppCompatActivity {
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DeleteData(sessionIdTask);
+                //DeleteData(sessionIdTask);
+                //toastMessage(sessionIdTask + ", " + sessionIdSubTask);
+                DeleteData(sessionIdTask, sessionIdSubTask);
                 finish();
             }
         });
 
-        if(!sessionNewSubTask) {
-            //toastMessage("task : " + sessionIdTask + ", subTask : " + sessionIdSubTask);
-            populateDataSubActivity(sessionIdTask);
-        }else{
-            getTitleById(sessionIdTask);
+
+        if(switchFinished.isChecked()){
+            DeleteData(sessionIdTask, sessionIdSubTask);
         }
     }
     public void getTitleById(int id){
@@ -97,11 +108,9 @@ public class SubActivity extends AppCompatActivity {
         }
     }
 
-    public void populateDataSubActivity(int id){
-        Cursor data = databaseHelper.getData(databaseHelper.TABLE_TASK_EDIT_ACTIVITY,databaseHelper.COL_1_EA, id);
+    public void populateDataSubActivity(int idTask, int idSubTask){
+        Cursor data = databaseHelper.getData(databaseHelper.TABLE_TASK_EDIT_ACTIVITY, databaseHelper.COL_0_EA, databaseHelper.COL_1_EA, idTask, idSubTask);
         //Cursor dataJoin = databaseHelper.getData(databaseHelper.TABLE_NAME_MAIN_ACTIVITY, id);
-
-
 
         if(data.moveToNext()){
             //getTitleById(id);
@@ -120,10 +129,13 @@ public class SubActivity extends AppCompatActivity {
         MainActivity.databaseHelper.addDataEditActivity(idTask, description, dateFin, finished);
     }
 
+    public void UpdateData(int idTask, int idSubTask, String description, String dateFin, boolean finished){
+        MainActivity.databaseHelper.updateData(idTask, idSubTask, description, dateFin, finished);
+    }
 
 
-    public void DeleteData(int id){
-        MainActivity.databaseHelper.deleteDataEditActivity(id);
+    public void DeleteData(int idTask, int idSubTask){
+        MainActivity.databaseHelper.deleteDataEditActivity(idTask, idSubTask);
     }
 
 
