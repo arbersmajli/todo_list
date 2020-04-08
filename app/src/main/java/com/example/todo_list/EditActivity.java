@@ -193,8 +193,15 @@ public class EditActivity extends AppCompatActivity {
 
         ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listDataContent);
         listViewSubTask.setAdapter(adapter);
+
+        
+
         data.close();
 
+
+    }
+
+    public void colourListView(ListView listView){
 
     }
 

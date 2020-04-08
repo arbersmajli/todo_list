@@ -86,21 +86,48 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        if(getListViewSize(DatabaseHelper.TABLE_NAME_MAIN_ACTIVITY) == 0){
+            buttonSearch.setVisibility(View.GONE);
+            listView.setVisibility(View.GONE);
+            searchEditText.setVisibility(View.GONE);
+        }else {
+            buttonSearch.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.VISIBLE);
+            searchEditText.setVisibility(View.VISIBLE);
+            populateListView(DatabaseHelper.TABLE_NAME_MAIN_ACTIVITY, "");
+        }
 
-        populateListView(DatabaseHelper.TABLE_NAME_MAIN_ACTIVITY,"");
-
-    }
+        toastMessage("zebi"+getListViewSize(DatabaseHelper.TABLE_NAME_MAIN_ACTIVITY));
+  }
 
     @Override
     public void onRestart(){
         super.onRestart();
-        listDataContent.clear();
-        populateListView(DatabaseHelper.TABLE_NAME_MAIN_ACTIVITY,"");
+        if(getListViewSize(DatabaseHelper.TABLE_NAME_MAIN_ACTIVITY) == 0){
+            buttonSearch.setVisibility(View.GONE);
+            listView.setVisibility(View.GONE);
+            searchEditText.setVisibility(View.GONE);
+        }else {
+            buttonSearch.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.VISIBLE);
+            searchEditText.setVisibility(View.VISIBLE);
+            listDataContent.clear();
+            populateListView(DatabaseHelper.TABLE_NAME_MAIN_ACTIVITY, "");
+        }
+
+        toastMessage("nique"+getListViewSize(DatabaseHelper.TABLE_NAME_MAIN_ACTIVITY));
+
     }
 
     public static void deleteListView(){
         listDataContent.clear();
         listView.setAdapter(null);
+    }
+
+    public int getListViewSize(String table){
+        Cursor data = databaseHelper.getData(table, "");
+
+        return data.getCount();
     }
 
     public void populateListView(String table, String clause){
