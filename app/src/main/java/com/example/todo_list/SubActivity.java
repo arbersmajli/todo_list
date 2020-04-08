@@ -1,8 +1,14 @@
 package com.example.todo_list;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RectShape;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -11,6 +17,8 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import java.util.regex.Pattern;
+
 public class SubActivity extends AppCompatActivity {
 
     private Button add, cancel, delete;
@@ -18,7 +26,7 @@ public class SubActivity extends AppCompatActivity {
     private Switch switchFinished;
     private boolean finished, sessionNewSubTask;
     public static DatabaseHelper databaseHelper;
-    String sessionTitle, sessionDescription;
+    String sessionTitle, sessionDescription, regexDate;
     int sessionIdTask, sessionIdSubTask;
 
     @Override
@@ -40,6 +48,7 @@ public class SubActivity extends AppCompatActivity {
         // enlever le clavier
         description.setInputType(InputType.TYPE_NULL);
         date.setInputType(InputType.TYPE_NULL);
+        regexDate = "^([0-2][0-9]|(3)[0-1])(\\.)(((0)[0-9])|((1)[0-2]))(\\.)\\d{4}$";
 
 
         //sessionTitle = getIntent().getStringExtra(databaseHelper.COL_1_EA);
@@ -64,14 +73,24 @@ public class SubActivity extends AppCompatActivity {
 
 
         add.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void onClick(View v) {
                 finished = switchFinished.isChecked();
-                if (sessionNewSubTask) {
-                    AddData(sessionIdTask, description.getText().toString(), date.getText().toString(), finished);
-                } else {
-                    UpdateData(sessionIdTask, sessionIdSubTask, description.getText().toString(), date.getText().toString(), finished);
+                if(Pattern.matches(regexDate, date.getText().toString())){
+                    if (sessionNewSubTask) {
+                        AddData(sessionIdTask, description.getText().toString(), date.getText().toString(), finished);
+                    } else {
+                        UpdateData(sessionIdTask, sessionIdSubTask, description.getText().toString(), date.getText().toString(), finished);
+                    }
+                }else{
+                    ShapeDrawable shape = new ShapeDrawable(new RectShape());
+                    shape.getPaint().setColor(Color.RED);
+                    shape.getPaint().setStyle(Paint.Style.STROKE);
+                    shape.getPaint().setStrokeWidth(3);
+                    date.setBackground(shape);
                 }
+
                 finish();
             }
         });

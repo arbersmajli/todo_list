@@ -178,9 +178,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
 
-
-
-
     public boolean deleteDataEditActivity(int id){
         SQLiteDatabase database = this.getWritableDatabase();
 
