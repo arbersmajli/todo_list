@@ -83,6 +83,7 @@ public class SubActivity extends AppCompatActivity {
                     } else {
                         UpdateData(sessionIdTask, sessionIdSubTask, description.getText().toString(), date.getText().toString(), finished);
                     }
+                    finish();
                 }else{
                     ShapeDrawable shape = new ShapeDrawable(new RectShape());
                     shape.getPaint().setColor(Color.RED);
@@ -91,7 +92,6 @@ public class SubActivity extends AppCompatActivity {
                     date.setBackground(shape);
                 }
 
-                finish();
             }
         });
 

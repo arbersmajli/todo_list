@@ -185,7 +185,7 @@ public class EditActivity extends AppCompatActivity {
         Cursor data = databaseHelper.getData(table, databaseHelper.COL_1_EA, idActivity);
 
         while(data.moveToNext()){
-            listDataContent.add(data.getInt(0)+ ") " +data.getString(2));
+            listDataContent.add(data.getInt(0)+ ") " +data.getString(2) + ", " + data.getString(3));
         }
 
         ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listDataContent);
