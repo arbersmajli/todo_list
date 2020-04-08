@@ -14,6 +14,7 @@ import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -28,6 +29,7 @@ public class SubActivity extends AppCompatActivity {
     public static DatabaseHelper databaseHelper;
     String sessionTitle, sessionDescription, regexDate;
     int sessionIdTask, sessionIdSubTask;
+    public LinearLayout linearLayoutSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,14 +47,15 @@ public class SubActivity extends AppCompatActivity {
         switchFinished = findViewById(R.id.switchFinished);
         title = findViewById(R.id.editTextSubTitle);
 
+
+        linearLayoutSwitch =  findViewById(R.id.switchFinishedLayout);
+
         // enlever le clavier
         description.setInputType(InputType.TYPE_NULL);
         date.setInputType(InputType.TYPE_NULL);
         regexDate = "^([0-2][0-9]|(3)[0-1])(\\.)(((0)[0-9])|((1)[0-2]))(\\.)\\d{4}$";
 
 
-        //sessionTitle = getIntent().getStringExtra(databaseHelper.COL_1_EA);
-        //sessionDescription  = getIntent().getStringExtra(databaseHelper.COL_2_EA);
         sessionIdTask = getIntent().getIntExtra(databaseHelper.COL_0_EA,-1);
         sessionIdSubTask = getIntent().getIntExtra(databaseHelper.COL_1_EA,-1);
         sessionNewSubTask = getIntent().getBooleanExtra("newSubTask", false);
@@ -65,6 +68,7 @@ public class SubActivity extends AppCompatActivity {
             add.setText("Update");
         }else{
             getTitleById(sessionIdTask);
+            linearLayoutSwitch.setVisibility(View.GONE);
         }
 
         //toastMessage(databaseHelper.COL_0_EA +" : " +sessionIdTask + ", " + databaseHelper.COL_1_EA + " : " + sessionIdSubTask);

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -51,6 +52,8 @@ public class EditActivity extends AppCompatActivity {
 
         buttonNewSubTask.setVisibility(View.GONE);
         listViewSubTask.setVisibility(View.GONE);
+
+        editTextTitle.setInputType(InputType.TYPE_NULL);
 
         if(sessionNewTask){
             editTextTitle.setText("");

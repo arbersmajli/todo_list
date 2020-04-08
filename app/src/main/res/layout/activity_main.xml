@@ -7,7 +7,7 @@
         android:id="@+id/newTaskButton"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Nouvelle tâche"/>
+        android:text="Nouvelle ToDo list"/>
 
     <EditText
         android:id="@+id/searchTask"
