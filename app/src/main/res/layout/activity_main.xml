@@ -5,12 +5,6 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--Button
-        android:id="@+id/newTaskButton"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="Nouvelle ToDo list"/-->
-
     <EditText
         android:id="@+id/searchTask"
         android:layout_width="match_parent"
