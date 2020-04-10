@@ -15,6 +15,8 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -29,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     HashMap<String, String> listData = new HashMap<>();
     private static Button buttonSearch;
+    private static FloatingActionButton floatingActionButton;
 
      Boolean newTask = false;
 
@@ -42,16 +45,27 @@ public class MainActivity extends AppCompatActivity {
         searchEditText = findViewById(R.id.searchTask);
         databaseHelper = new DatabaseHelper(this);
         buttonSearch = findViewById(R.id.searchTaskButton);
+        floatingActionButton = findViewById(R.id.floating_button);
         final String contentEditText = searchEditText.getText().toString();
         //populateListView();
-        final Button newTaskButton = findViewById(R.id.newTaskButton);
+        //final Button newTaskButton = findViewById(R.id.newTaskButton);
         final Intent intentEditActivity = new Intent(this, EditActivity.class);
 
         searchEditText.setInputType(InputType.TYPE_NULL);
-
+/*
         newTaskButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+                newTask = true;
+                intentEditActivity.putExtra("sessionNewTask", true);
+                intentEditActivity.putExtra("sessionId", -1);
+                startActivity(intentEditActivity);
+            }
+        });
+*/
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 newTask = true;
                 intentEditActivity.putExtra("sessionNewTask", true);
                 intentEditActivity.putExtra("sessionId", -1);
@@ -85,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
 
         populateListView(DatabaseHelper.TABLE_NAME_MAIN_ACTIVITY,"");
 
