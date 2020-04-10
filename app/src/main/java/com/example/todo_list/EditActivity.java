@@ -1,11 +1,14 @@
 package com.example.todo_list;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -13,8 +16,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public class EditActivity extends AppCompatActivity {
@@ -29,7 +35,7 @@ public class EditActivity extends AppCompatActivity {
     public static ArrayList<String> listDataContent = new ArrayList<>(); // liste qui est ensuite affiché au ListView
     public static ArrayList<Integer> listIdDataContent = new ArrayList<>();
     int sessionId, newIdCreated;
-
+    Spinner spinnerColor;
 
 
 
@@ -48,12 +54,13 @@ public class EditActivity extends AppCompatActivity {
         sessionId = getIntent().getIntExtra("sessionId", -1);
         listViewSubTask = findViewById(R.id.listViewSubTask);
         final Intent intentEditSubActivity = new Intent(this, SubActivity.class);
-
-
+        spinnerColor = findViewById(R.id.colorSpinner);
         buttonNewSubTask.setVisibility(View.GONE);
         listViewSubTask.setVisibility(View.GONE);
-
         editTextTitle.setInputType(InputType.TYPE_NULL);
+
+
+
 
         if(sessionNewTask){
             editTextTitle.setText("");
@@ -72,19 +79,16 @@ public class EditActivity extends AppCompatActivity {
             //editTextTitle.setText("_____"+sessionId);
         }
 
-
-
-
-
         buttonSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                  if(editTextTitle.length() != 0){
                      String newEntry = editTextTitle.getText().toString();
+
                      if(sessionNewTask){
-                         AddData(newEntry);
+                         AddData(newEntry, spinnerColor.getSelectedItem().toString());
                      }else{
-                         Update(sessionId, editTextTitle.getText().toString());
+                         Update(sessionId, editTextTitle.getText().toString(), spinnerColor.getSelectedItem().toString());
                          //DeleteData(sessionId);
                          //AddData(newEntry);
                      }
@@ -153,15 +157,55 @@ public class EditActivity extends AppCompatActivity {
         Cursor data = databaseHelper.getData(DatabaseHelper.TABLE_NAME_MAIN_ACTIVITY, DatabaseHelper.COL_0_MA, id);
         while(data.moveToNext()){
             editTextTitle.setText(data.getString(1));
-        }
+            spinnerColor.setSelection(getSpinnerPositionByName(data.getString(2)));
 
+            // n'ai pas su comment lier la couleur du fichier "strings.xml" à la couleur de colors.xml
+            switch (data.getString(2)){
+                case "Blanc":
+                    getWindow().getDecorView().setBackgroundColor(getResources().getColor(R.color.blanc));
+                    break;
+                case "Vert" :
+                    getWindow().getDecorView().setBackgroundColor(getResources().getColor(R.color.vert));
+                    break;
+                case "Bleu" :
+                    getWindow().getDecorView().setBackgroundColor(getResources().getColor(R.color.bleu));
+                    break;
+                case "Orange" :
+                    getWindow().getDecorView().setBackgroundColor(getResources().getColor(R.color.orange));
+                    break;
+                case "Brun" :
+                    getWindow().getDecorView().setBackgroundColor(getResources().getColor(R.color.brun));
+                    break;
+                case "Rouge" :
+                    getWindow().getDecorView().setBackgroundColor(getResources().getColor(R.color.rouge));
+                    break;
+                case "Jaune" :
+                    getWindow().getDecorView().setBackgroundColor(getResources().getColor(R.color.jaune));
+                    break;
+                case "Violet" :
+                    getWindow().getDecorView().setBackgroundColor(getResources().getColor(R.color.violet));
+                    break;
+            }
+        }
         data.close();
+    }
+
+
+
+
+
+    public int getSpinnerPositionByName(String name){
+        for (int i=0;i<spinnerColor.getCount();i++){
+            if (spinnerColor.getItemAtPosition(i).toString().equalsIgnoreCase(name)){
+                return i;
+            }
+        }
+        return 0;
     }
 
 
     public void DeleteData(int id){
         MainActivity.databaseHelper.deleteDataMainActivity(id);
-
     //    MainActivity.databaseHelper.deleteDataMainActivity(entry);
     }
 
@@ -175,13 +219,13 @@ public class EditActivity extends AppCompatActivity {
         //populateListView(DatabaseHelper.TABLE_TASK_EDIT_ACTIVITY, editTextTitle.getText().toString());
     }
 
-    public void Update(int id, String newTitle){
-        MainActivity.databaseHelper.updateData(id, newTitle);
+    public void Update(int id, String newTitle, String newColor){
+        MainActivity.databaseHelper.updateData(id, newTitle,newColor);
     }
 
 
-    public void  AddData(String entry){
-        MainActivity.databaseHelper.addDataMainActivity(entry);
+    public void  AddData(String newTitle, String newColor){
+        MainActivity.databaseHelper.addDataMainActivity(newTitle, newColor);
     }
 
     public void populateListView(String table, int idActivity){

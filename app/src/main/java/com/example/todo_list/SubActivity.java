@@ -4,6 +4,8 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ShapeDrawable;
@@ -31,6 +33,8 @@ public class SubActivity extends AppCompatActivity {
     int sessionIdTask, sessionIdSubTask;
     public LinearLayout linearLayoutSwitch;
 
+    Bitmap image;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +50,8 @@ public class SubActivity extends AppCompatActivity {
         date = findViewById(R.id.editTextSubDate);
         switchFinished = findViewById(R.id.switchFinished);
         title = findViewById(R.id.editTextSubTitle);
+
+        image = BitmapFactory.decodeResource(getResources(), this.getTaskId());
 
 
         linearLayoutSwitch =  findViewById(R.id.switchFinishedLayout);
@@ -83,9 +89,9 @@ public class SubActivity extends AppCompatActivity {
                 finished = switchFinished.isChecked();
                 if(Pattern.matches(regexDate, date.getText().toString())){
                     if (sessionNewSubTask) {
-                        AddData(sessionIdTask, description.getText().toString(), date.getText().toString(), finished);
+                        AddData(sessionIdTask, description.getText().toString(), date.getText().toString(), finished, null);
                     } else {
-                        UpdateData(sessionIdTask, sessionIdSubTask, description.getText().toString(), date.getText().toString(), finished);
+                        UpdateData(sessionIdTask, sessionIdSubTask, description.getText().toString(), date.getText().toString(), finished, null);
                     }
                     finish();
                 }else{
@@ -148,12 +154,12 @@ public class SubActivity extends AppCompatActivity {
         }
     }
 
-    public void  AddData(int idTask, String description, String dateFin, boolean finished){
-        MainActivity.databaseHelper.addDataEditActivity(idTask, description, dateFin, finished);
+    public void  AddData(int idTask, String description, String dateFin, boolean finished, byte[] link_picture){
+        MainActivity.databaseHelper.addDataEditActivity(idTask, description, dateFin, finished, link_picture);
     }
 
-    public void UpdateData(int idTask, int idSubTask, String description, String dateFin, boolean finished){
-        MainActivity.databaseHelper.updateData(idTask, idSubTask, description, dateFin, finished);
+    public void UpdateData(int idTask, int idSubTask, String description, String dateFin, boolean finished, byte[] link_picture){
+        MainActivity.databaseHelper.updateData(idTask, idSubTask, description, dateFin, finished, link_picture);
     }
 
 

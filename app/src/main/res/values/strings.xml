@@ -1,3 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">todo_list</string>
+
+    <string-array name="color_array">
+        <item>Blanc</item>
+        <item>Vert</item>
+        <item>Bleu</item>
+        <item>Orange</item>
+        <item>Brun</item>
+        <item>Rouge</item>
+        <item>Jaune</item>
+        <item>Violet</item>
+    </string-array>
 </resources>

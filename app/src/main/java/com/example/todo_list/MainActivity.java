@@ -52,17 +52,7 @@ public class MainActivity extends AppCompatActivity {
         final Intent intentEditActivity = new Intent(this, EditActivity.class);
 
         searchEditText.setInputType(InputType.TYPE_NULL);
-/*
-        newTaskButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                newTask = true;
-                intentEditActivity.putExtra("sessionNewTask", true);
-                intentEditActivity.putExtra("sessionId", -1);
-                startActivity(intentEditActivity);
-            }
-        });
-*/
+
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,6 +117,15 @@ public class MainActivity extends AppCompatActivity {
 
         ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listDataContent);
         listView.setAdapter(adapter);
+
+        if(adapter.isEmpty()){
+            buttonSearch.setVisibility(View.GONE);
+            listView.setVisibility(View.GONE);
+        }else{
+            buttonSearch.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.VISIBLE);
+        }
+
         data.close();
     }
 

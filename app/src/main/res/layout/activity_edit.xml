@@ -39,7 +39,7 @@
                 android:id="@+id/buttonSubmit"
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
+                android:layout_marginLeft="35dp"
                 android:layout_toRightOf="@+id/editTextTitle"
                 android:text="Valider" />
 
@@ -47,28 +47,39 @@
                 android:id="@+id/buttonCancel"
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
+                android:layout_marginLeft="35dp"
                 android:layout_marginTop="50dp"
                 android:layout_toRightOf="@+id/editTextTitle"
                 android:text="Annuler" />
 
-            <Button
-                android:id="@+id/buttonDelete"
+            <Spinner
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="35dp"
+                android:layout_marginTop="100dp"
+                android:layout_toRightOf="@+id/editTextTitle"
+                android:id="@+id/colorSpinner"
+                android:entries="@array/color_array"
+                />
+
+            <!--Button
+                android:id="@+id/buttonChangeColor"
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
                 android:layout_marginTop="100dp"
                 android:layout_toRightOf="@+id/editTextTitle"
-                android:text="Supprimer" />
+                android:text="Changer la couleur" /-->
 
             <Button
-                android:id="@+id/buttonChangeColor"
+                android:id="@+id/buttonDelete"
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
-                android:layout_marginTop="150dp"
+                android:layout_marginLeft="35dp"
+                android:layout_marginTop="130dp"
                 android:layout_toRightOf="@+id/editTextTitle"
-                android:text="Changer la couleur" />
+                android:text="Supprimer" />
+
 
 
         </RelativeLayout>
