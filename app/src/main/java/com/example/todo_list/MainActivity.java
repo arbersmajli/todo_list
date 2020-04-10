@@ -1,9 +1,15 @@
 package com.example.todo_list;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -40,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        createNotificationChannel();
 
         listView = findViewById(R.id.listView);
         searchEditText = findViewById(R.id.searchTask);
@@ -86,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
                     toastMessage("Aucune correspondance");
                 }else if(searchEditText.length() <= 0){
                     toastMessage("Rien recherché");
+                    sendNotification("b", "ser");
                 }
             }
         });
@@ -117,20 +125,46 @@ public class MainActivity extends AppCompatActivity {
 
         ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listDataContent);
         listView.setAdapter(adapter);
-
-        if(adapter.isEmpty()){
-            buttonSearch.setVisibility(View.GONE);
-            listView.setVisibility(View.GONE);
-        }else{
-            buttonSearch.setVisibility(View.VISIBLE);
-            listView.setVisibility(View.VISIBLE);
-        }
-
         data.close();
     }
 
     private void toastMessage(String message){
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+
+    public void sendNotification(String title, String description){
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "667")
+                .setSmallIcon(android.R.drawable.alert_dark_frame)
+                .setContentTitle(title)
+                .setContentText(description)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(contentIntent);
+
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(667, builder.build());
+
+
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("667", name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
 

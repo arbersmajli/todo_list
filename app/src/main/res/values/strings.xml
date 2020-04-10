@@ -2,6 +2,9 @@
 <resources>
     <string name="app_name">todo_list</string>
 
+    <string name="channel_name">ToDo</string>
+    <string name="channel_description">Canal de notification</string>
+
     <string-array name="color_array">
         <item>Blanc</item>
         <item>Vert</item>
