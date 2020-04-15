@@ -23,15 +23,19 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     public static DatabaseHelper databaseHelper;
     private static ListView listView; // affichage user
-    private Button searchListView;
     private static EditText searchEditText;
     public static ArrayList<String> listDataContent = new ArrayList<>(); // liste qui est ensuite affiché au ListView
 
@@ -54,11 +58,10 @@ public class MainActivity extends AppCompatActivity {
         buttonSearch = findViewById(R.id.searchTaskButton);
         floatingActionButton = findViewById(R.id.floating_button);
         final String contentEditText = searchEditText.getText().toString();
-        //populateListView();
-        //final Button newTaskButton = findViewById(R.id.newTaskButton);
         final Intent intentEditActivity = new Intent(this, EditActivity.class);
 
         searchEditText.setInputType(InputType.TYPE_NULL);
+        notificationByTask();
 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,10 +79,8 @@ public class MainActivity extends AppCompatActivity {
                 Object listItem = listView.getItemAtPosition(position);
                 newTask = false;
                 int idPosition = Integer.parseInt(listItem.toString().substring(0, listItem.toString().indexOf(")")));
-                //intentEditActivity.putExtra("sessionNewTask", false);
                 intentEditActivity.putExtra("sessionNewTask", newTask);
                 intentEditActivity.putExtra("sessionId", idPosition);
-                //intentEditActivity.putExtra(databaseHelper.COL_1_MA, listItem.toString());
                 startActivity(intentEditActivity);
             }
         });
@@ -106,7 +107,10 @@ public class MainActivity extends AppCompatActivity {
     public void onRestart(){
         super.onRestart();
         listDataContent.clear();
+        notificationByTask();
         populateListView(DatabaseHelper.TABLE_NAME_MAIN_ACTIVITY,"");
+
+
     }
 
     public static void deleteListView(){
@@ -121,6 +125,17 @@ public class MainActivity extends AppCompatActivity {
         while(data.moveToNext()){
             //listData.put(data.getString(0), data.getString(1));
             listDataContent.add(data.getString(0) + ") " + data.getString(1));
+        }
+
+
+        if(listDataContent.isEmpty()){
+            buttonSearch.setVisibility(View.GONE);
+            listView.setVisibility(View.GONE);
+            searchEditText.setVisibility(View.GONE);
+        }else{
+            buttonSearch.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.VISIBLE);
+            searchEditText.setVisibility(View.VISIBLE);
         }
 
         ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listDataContent);
@@ -147,8 +162,6 @@ public class MainActivity extends AppCompatActivity {
 
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         manager.notify(667, builder.build());
-
-
     }
 
     private void createNotificationChannel() {
@@ -165,6 +178,23 @@ public class MainActivity extends AppCompatActivity {
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+    }
+
+    private void notificationByTask(){
+        Date currentTime = Calendar.getInstance().getTime();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        Cursor data = databaseHelper.getData(databaseHelper.TABLE_TASK_EDIT_ACTIVITY, databaseHelper.COL_0_EA, -1);
+        String date = null;
+
+        while(data.moveToNext()){
+            date = data.getString(3);
+            if(date.equals(simpleDateFormat.format(currentTime))){
+                sendNotification(data.getString(2), data.getString(3) + "; " + data.getString(2));
+            }
+        }
+
     }
 
 

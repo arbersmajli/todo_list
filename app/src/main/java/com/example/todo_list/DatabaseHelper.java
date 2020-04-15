@@ -68,7 +68,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    public boolean addDataEditActivity(int idTask, String description, String dateFin, boolean finished, byte[] link_picture){
+    public boolean addDataEditActivity(int idTask, String description, String dateFin, boolean finished, String link_picture){
+
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_1_EA, idTask);
@@ -88,20 +89,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-/*
-    public boolean deleteDataMainActivity(String item){
-        SQLiteDatabase database = this.getWritableDatabase();
-
-        long result = database.delete(TABLE_NAME_MAIN_ACTIVITY, COL_1_MA +  " = '" + item + "'", null);
-        // database.delete(TABLE_TASK_EDIT_ACTIVITY, COL_1_EA + " = '"+ item + "'", null);
-
-        if(result == 1){
-            return false;
-        }else{
-            return true;
-        }
-    }
-*/
     public boolean deleteDataMainActivity(int idMainActivity){
         SQLiteDatabase database = this.getWritableDatabase();
 
@@ -144,7 +131,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public boolean updateData(int idTask, int idSubTask, String description, String date, Boolean finished, byte[] link_picture ){
+    public boolean updateData(int idTask, int idSubTask, String description, String date, Boolean finished, String link_picture ){
         SQLiteDatabase database = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
