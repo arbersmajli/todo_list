@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
@@ -33,6 +34,7 @@ import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static int SPLASH_TIME_OUT = 2000;
     private static final String TAG = "MainActivity";
     public static DatabaseHelper databaseHelper;
     private static ListView listView; // affichage user
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         createNotificationChannel();
 
